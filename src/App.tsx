@@ -1,37 +1,52 @@
-import { useEffect, useState } from 'react';
-import { getUsers } from './api';
-import { User } from './types';
-import { UserForm } from './components/UserForm';
-import { UserList } from './components/UserList';
+import { useState } from 'react';
+import { TabNavigation } from './components/TabNavigation';
+import type { TabType } from './components/TabNavigation';
+import { UserManager } from './components/UserManager';
+import { ProductCatalog } from './components/ProductCatalog';
+import { AnalyticsDashboard } from './components/AnalyticsDashboard';
+import { SearchPanel } from './components/SearchPanel';
+import { FileUpload } from './components/FileUpload';
+import { SettingsPanel } from './components/SettingsPanel';
 import './index.css';
 
 function App() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [activeTab, setActiveTab] = useState<TabType>('users');
 
-  const fetchUsers = async () => {
-    try {
-      const data = await getUsers();
-      setUsers(data);
-    } catch (error) {
-      console.error('Failed to fetch users', error);
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'users':
+        return <UserManager />;
+      case 'products':
+        return <ProductCatalog />;
+      case 'analytics':
+        return <AnalyticsDashboard />;
+      case 'search':
+        return <SearchPanel />;
+      case 'upload':
+        return <FileUpload />;
+      case 'settings':
+        return <SettingsPanel />;
+      default:
+        return <UserManager />;
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleUserAdded = (newUser: User) => {
-    setUsers([...users, newUser]);
-  };
-
   return (
-    <div>
-      <h1>User Manager</h1>
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <UserForm onUserAdded={handleUserAdded} />
-        <UserList users={users} />
-      </div>
+    <div className="app">
+      <header className="app-header">
+        <h1>🚀 Demo App - Multi-API Integration</h1>
+        <p className="app-subtitle">Explore various API response types and integrations</p>
+      </header>
+
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+
+      <main className="app-content">
+        {renderContent()}
+      </main>
+
+      <footer className="app-footer">
+        <p>Built with React + TypeScript + Express</p>
+      </footer>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { createUser } from '../api';
-import { User } from '../types';
+import { userService } from '../services/userService';
+import type { User } from '../types';
 
 interface Props {
     onUserAdded: (user: User) => void;
@@ -13,7 +13,7 @@ export const UserForm: React.FC<Props> = ({ onUserAdded }) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const newUser = await createUser({ name, email });
+            const newUser = await userService.create({ name, email });
             onUserAdded(newUser);
             setName('');
             setEmail('');
